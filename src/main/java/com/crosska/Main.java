@@ -29,7 +29,6 @@ public class Main {
 
         AirportControl flightControl = new AirportControl();
         flightControl.find(param);
-
     }
 
 }
