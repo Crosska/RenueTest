@@ -1,8 +1,6 @@
 package com.crosska;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class FileWorker {
@@ -10,16 +8,12 @@ public class FileWorker {
     // Map хранит в себе строку из файла как ключ и значение столбца по которому будет делаться сортировка
     private Map<String, String> sortedMap = new HashMap<>();
     private long duration;
-    private String path = "null";
 
     public Map<String, String> ReadFile(int column) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Путь к файлу данных (включая его название с расширением): ");
-        Charset utf8 = StandardCharsets.UTF_8;
         String search = "";
-        path = scanner.nextLine();
         long startTime = 0;
-        try (InputStreamReader inputStreamReader = new InputStreamReader(new FileInputStream(path), utf8)) {
+        try (InputStreamReader inputStreamReader = new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/airports.dat")))) {
             BufferedReader input = new BufferedReader(inputStreamReader);
             System.out.print("Мы ищем: ");
             search = scanner.nextLine();
@@ -64,7 +58,6 @@ public class FileWorker {
         for (Map.Entry<K, V> entry : mappings) {
             linkedHashMap.put(entry.getKey(), entry.getValue());
         }
-
         return linkedHashMap;
     }
 
