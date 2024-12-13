@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="airports-search">
+    <output-path>$PROJECT_DIR$/out/artifacts/airports_search</output-path>
+    <root id="archive" name="airports-search.jar">
+      <element id="module-output" name="RenueTest" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/yaml/snakeyaml/2.3/snakeyaml-2.3.jar" path-in-jar="/" />
+      <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.18.2" />
+      <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.18.2" />
+      <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.18.2" />
+      <element id="library" level="project" name="Maven: commons-cli:commons-cli:1.8.0" />
+      <element id="library" level="project" name="Maven: org.yaml:snakeyaml:2.3" />
+    </root>
+  </artifact>
+</component>

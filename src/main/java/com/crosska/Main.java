@@ -6,6 +6,24 @@ public class Main {
 
     public static void main(String[] args) {
 
+        //Option option = new Option("s", "search", true, "Login");
+
+        int[] res1 = {2, 24, 15, 580};
+        int[] res2 = {210, 49, 2043};
+        int[] res3 = {1, 997, 641, 35, 98};
+        ResultElem el1 = new ResultElem("ИЩЕМЭТО", res1, 12334);
+        ResultElem el2 = new ResultElem("ИЩЕМТО", res2, 9445);
+        ResultElem el3 = new ResultElem("ИЩЕМСАМОЕ", res3, 718252);
+
+        JSONObject jsonObject = new JSONObject(123213, "C:/result.json");
+
+        jsonObject.addNewResult(el1);
+        jsonObject.addNewResult(el2);
+        jsonObject.addNewResult(el3);
+
+        JSONController jsonController = new JSONController();
+        jsonController.writeResult(jsonObject);
+
         Parameters parameters = new Parameters();
         Map<String, Object> map = parameters.getParameters();
 
