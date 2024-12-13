@@ -4,12 +4,9 @@ import java.io.*;
 import java.util.*;
 
 public class FileWorker {
+    private static long duration;
 
-    // Map хранит в себе строку из файла как ключ и значение столбца по которому будет делаться сортировка
-    private Map<Integer, String> sortedMap = new HashMap<>();
-    private long duration;
-
-    public List<String> readSearchQuery(String searchFilePath) {
+    public static List<String> readSearchQuery(String searchFilePath) {
         List<String> searches = new ArrayList<>();
         try {
             File file = new File(searchFilePath);
@@ -21,7 +18,7 @@ public class FileWorker {
                 search = reader.readLine();
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Ошибка. Указанный в параметрах файл c поисковыми запросами был не найден.");
+            System.err.println("Ошибка. Указанный в параметрах файл c поисковыми запросами был не найден.");
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -29,11 +26,12 @@ public class FileWorker {
         return searches;
     }
 
-    public Map<Integer, String> readFile(int column, String inputFile, String search) {
-        sortedMap.clear();
-        long startTime = 0;
-        try (InputStreamReader inputStreamReader = new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/airports.csv")))) {
-            BufferedReader input = new BufferedReader(inputStreamReader);
+    public static Map<Integer, String> readFile(int column, String dataFile, String search) {
+        // Map хранит в себе номер строки в файле как ключ и значение столбца по которому будет делаться сортировка
+        Map<Integer, String> sortedMap = new HashMap<>();
+        long startTime;
+        try (FileReader fr = new FileReader(dataFile)) {
+            BufferedReader input = new BufferedReader(fr);
             startTime = System.currentTimeMillis();
             String line;
             int lineNum = 1;
@@ -65,8 +63,8 @@ public class FileWorker {
         return sortedMap;
     }
 
-    private <K, V extends Comparable> Map<K, V> sortByValues(Map<K, V> map) {
-        // создаем список записей карты и сортируем их по значениям
+    private static <K, V extends Comparable> Map<K, V> sortByValues(Map<K, V> map) {
+        // создаем список записей мапы и сортируем их по значениям
         List<Map.Entry<K, V>> mappings = new ArrayList<>(map.entrySet());
         mappings.sort(Map.Entry.comparingByValue());
 
@@ -80,7 +78,7 @@ public class FileWorker {
         return linkedHashMap;
     }
 
-    public long getSearchDuration() {
+    public static long getSearchDuration() {
         System.out.println("Метод поиска длился: " + duration + " мс. (" + duration / 1000 + " с.)");
         return duration;
     }

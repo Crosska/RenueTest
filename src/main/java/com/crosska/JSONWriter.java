@@ -22,10 +22,10 @@ public class JSONWriter {
 
         try (FileWriter filewriter = new FileWriter(jsonObject.getOutputPath(), false)) {
             filewriter.write(writer.toString());
-            System.out.println(writer.toString());
+            System.out.println(writer);
             filewriter.flush();
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
 
     }
