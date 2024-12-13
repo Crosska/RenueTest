@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="RenueTest:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/RenueTest_jar</output-path>
-    <root id="archive" name="RenueTest.jar">
-      <element id="module-output" name="RenueTest" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/yaml/snakeyaml/2.3/snakeyaml-2.3.jar" path-in-jar="/" />
-    </root>
-  </artifact>
-</component>
