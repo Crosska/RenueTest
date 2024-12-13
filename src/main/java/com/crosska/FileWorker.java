@@ -6,19 +6,37 @@ import java.util.*;
 public class FileWorker {
 
     // Map хранит в себе строку из файла как ключ и значение столбца по которому будет делаться сортировка
-    private Map<String, String> sortedMap = new HashMap<>();
+    private Map<Integer, String> sortedMap = new HashMap<>();
     private long duration;
 
-    public Map<String, String> ReadFile(int column) {
-        Scanner scanner = new Scanner(System.in);
-        String search = "";
+    public List<String> readSearchQuery(String searchFilePath) {
+        List<String> searches = new ArrayList<>();
+        try {
+            File file = new File(searchFilePath);
+            FileReader fr = new FileReader(file);
+            BufferedReader reader = new BufferedReader(fr);
+            String search = reader.readLine();
+            while (search != null) {
+                if(!search.equals("") && !search.equals("\n")) searches.add(search);
+                search = reader.readLine();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Ошибка. Указанный в параметрах файл c поисковыми запросами был не найден.");
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return searches;
+    }
+
+    public Map<Integer, String> readFile(int column, String inputFile, String search) {
+        sortedMap.clear();
         long startTime = 0;
         try (InputStreamReader inputStreamReader = new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/airports.csv")))) {
             BufferedReader input = new BufferedReader(inputStreamReader);
-            System.out.print("Мы ищем: ");
-            search = scanner.nextLine();
             startTime = System.currentTimeMillis();
             String line;
+            int lineNum = 1;
             while ((line = input.readLine()) != null && line.length() != 0) {
                 String[] s = line.split(",");
                 for (int i = 0; i < s.length; i++) {
@@ -31,13 +49,14 @@ public class FileWorker {
                     }
                 }
                 if (s[column].startsWith(search)) {
-                    sortedMap.put(line, s[column]);
+                    sortedMap.put(lineNum, s[column]);
                 }
+                lineNum++;
             }
             sortedMap = sortByValues(sortedMap);
         } catch (FileNotFoundException e) {
-            System.out.println("Ошибка, файл не найден");
-            System.exit(1);
+            System.out.println("Ошибка. Файл с данными об аэропортах не найден");
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -61,12 +80,9 @@ public class FileWorker {
         return linkedHashMap;
     }
 
-    public void getSearchDuration() {
+    public long getSearchDuration() {
         System.out.println("Метод поиска длился: " + duration + " мс. (" + duration / 1000 + " с.)");
-    }
-
-    public void preSortFile() {
-
+        return duration;
     }
 
 }

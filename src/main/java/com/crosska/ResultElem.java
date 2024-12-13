@@ -3,10 +3,10 @@ package com.crosska;
 public class ResultElem {
 
     private final String search;
-    private final int[] result;
+    private final Integer[] result;
     private final long time;
 
-    public ResultElem(String search, int[] result, long time) {
+    public ResultElem(String search, Integer[] result, long time) {
         this.search = search;
         this.result = result;
         this.time = time;
@@ -16,7 +16,7 @@ public class ResultElem {
         return search;
     }
 
-    public int[] getResult() {
+    public Integer[] getResult() {
         return result;
     }
 

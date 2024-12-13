@@ -1,52 +1,79 @@
 package com.crosska;
 
+import org.apache.commons.cli.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class Main {
 
+
+
     public static void main(String[] args) {
+        long startTime = System.currentTimeMillis();
 
-        //Option option = new Option("s", "search", true, "Login");
+        Options options = new Options();
+        options.addOption("d", "data", true, "Path to the .csv text data file (including filename and extension)");
+        options.addOption("c", "indexed-column-id", true, "Optional parameter which means search column number");
+        options.addOption("i", "input-file", true, "Path to the text file with search lines (including filename and extension)");
+        options.addOption("o", "output-file", true, "Path to the JSON file with results data (including filename and extension)");
+        options.addOption("Xmx7m", "Xmx7m", false, "Skip-able parameter by parser");
 
-        int[] res1 = {2, 24, 15, 580};
-        int[] res2 = {210, 49, 2043};
-        int[] res3 = {1, 997, 641, 35, 98};
-        ResultElem el1 = new ResultElem("ИЩЕМЭТО", res1, 12334);
-        ResultElem el2 = new ResultElem("ИЩЕМТО", res2, 9445);
-        ResultElem el3 = new ResultElem("ИЩЕМСАМОЕ", res3, 718252);
+        CommandLineParser parser = new DefaultParser();
+        try {
+            CommandLine cmd = parser.parse(options, args);
+            if (cmd.hasOption("data") && cmd.hasOption("input-file") && cmd.hasOption("output-file")) {
+                int columnId;
+                if (cmd.hasOption("indexed-column-id")) {
+                    columnId = Integer.parseInt(cmd.getOptionValue("indexed-column-id"));
+                    if(columnId >= 0 && columnId <= 13) {
+                        proceedSearch(columnId, cmd.getOptionValue("input-file"), cmd.getOptionValue("data"), cmd.getOptionValue("output-file"), startTime);
+                    } else {
+                        System.err.println("Ошибка. Параметр indexed-column-id (c) должен быть в пределах 0 <= c >= 13");
+                    }
+                } else {
+                    Parameters parameters = new Parameters();
+                    Map<String, Object> map = parameters.getParameters();
+                    columnId = (Integer) map.get("defaultColumn");
+                    proceedSearch(columnId, cmd.getOptionValue("input-file"), cmd.getOptionValue("data"), cmd.getOptionValue("output-file"), startTime);
 
-        JSONObject jsonObject = new JSONObject(123213, "C:/result.json");
-
-        jsonObject.addNewResult(el1);
-        jsonObject.addNewResult(el2);
-        jsonObject.addNewResult(el3);
-
-        JSONController jsonController = new JSONController();
-        jsonController.writeResult(jsonObject);
-
-        Parameters parameters = new Parameters();
-        Map<String, Object> map = parameters.getParameters();
-
-        int param = (Integer) map.get("defaultColumn");
-        if (args.length == 1) {
-            try {
-                param = Integer.parseInt(args[0]);
-                if (param < 0) {
-                    System.out.println("Ошибка, параметр должен быть больше 0");
-                    return;
                 }
-            } catch (NumberFormatException ex) {
-                System.out.println("Ошибка, укажите параметр числом");
-                return;
+            } else {
+                System.out.println("Ошибка. Необходимые параметры для запуска:\ndata (d) $путь\ninput-file (i) $путь\noutput-file (o) $путь");
             }
-        } else if (args.length > 1) {
-            System.out.println("Ошибка, доступен запуск с одним параметром или без параметром");
-            return;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("airports-search.jar", options);
         }
-        System.out.println("Параметр " + param);
 
-        AirportControl flightControl = new AirportControl();
-        flightControl.find(param);
+    }
+
+    private static void proceedSearch(int columnId, String inputFile, String dataFile, String outputFile, long startTime) {
+        FileWorker fileWorker = new FileWorker();
+        List<String> list = fileWorker.readSearchQuery(inputFile);
+
+        List<ResultElem> resArray = new ArrayList<>();
+        long initTime = System.currentTimeMillis() - startTime;
+        for (String search : list) {
+            System.out.println("\n -- Поиск по запросу \"" + search + "\"\n");
+            Map<Integer, String> sortedMap = fileWorker.readFile(columnId, dataFile, search);
+            for (Integer lineNum :sortedMap.keySet()) {
+                System.out.println(lineNum);
+            }
+            ResultElem result = new ResultElem(search, sortedMap.keySet().toArray(Integer[]::new), fileWorker.getSearchDuration());
+            resArray.add(result);
+        }
+        JSONObject jsonObject = new JSONObject(initTime, outputFile);
+
+        for(ResultElem resultElem : resArray) {
+            jsonObject.addNewResult(resultElem);
+        }
+
+        JSONWriter jsonWriter = new JSONWriter();
+        jsonWriter.writeResult(jsonObject);
+
     }
 
 }
