@@ -13,7 +13,7 @@ public class FileWorker {
         Scanner scanner = new Scanner(System.in);
         String search = "";
         long startTime = 0;
-        try (InputStreamReader inputStreamReader = new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/airports.dat")))) {
+        try (InputStreamReader inputStreamReader = new InputStreamReader(Objects.requireNonNull(Main.class.getResourceAsStream("/airports.csv")))) {
             BufferedReader input = new BufferedReader(inputStreamReader);
             System.out.print("Мы ищем: ");
             search = scanner.nextLine();
@@ -63,6 +63,10 @@ public class FileWorker {
 
     public void getSearchDuration() {
         System.out.println("Метод поиска длился: " + duration + " мс. (" + duration / 1000 + " с.)");
+    }
+
+    public void preSortFile() {
+
     }
 
 }
