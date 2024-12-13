@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 public class Main {
-
-
-
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
 
@@ -40,7 +37,7 @@ public class Main {
 
                 }
             } else {
-                System.out.println("Ошибка. Необходимые параметры для запуска:\ndata (d) $путь\ninput-file (i) $путь\noutput-file (o) $путь");
+                System.err.println("Ошибка. Необходимые параметры для запуска:\ndata (d) $путь\ninput-file (i) $путь\noutput-file (o) $путь");
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -51,18 +48,17 @@ public class Main {
     }
 
     private static void proceedSearch(int columnId, String inputFile, String dataFile, String outputFile, long startTime) {
-        FileWorker fileWorker = new FileWorker();
-        List<String> list = fileWorker.readSearchQuery(inputFile);
+        List<String> list = FileWorker.readSearchQuery(inputFile);
 
         List<ResultElem> resArray = new ArrayList<>();
         long initTime = System.currentTimeMillis() - startTime;
         for (String search : list) {
             System.out.println("\n -- Поиск по запросу \"" + search + "\"\n");
-            Map<Integer, String> sortedMap = fileWorker.readFile(columnId, dataFile, search);
+            Map<Integer, String> sortedMap = FileWorker.readFile(columnId, dataFile, search);
             for (Integer lineNum :sortedMap.keySet()) {
                 System.out.println(lineNum);
             }
-            ResultElem result = new ResultElem(search, sortedMap.keySet().toArray(Integer[]::new), fileWorker.getSearchDuration());
+            ResultElem result = new ResultElem(search, sortedMap.keySet().toArray(Integer[]::new), FileWorker.getSearchDuration());
             resArray.add(result);
         }
         JSONObject jsonObject = new JSONObject(initTime, outputFile);
