@@ -28,28 +28,30 @@ public class FileWorker {
 
     public static Map<Integer, String> readFile(int column, String dataFile) {
         // Map хранит в себе номер строки в файле как ключ и значение столбца по которому будет делаться сортировка
-        try (FileReader fr = new FileReader(dataFile)) {
-            BufferedReader input = new BufferedReader(fr);
+        try (Scanner scanner = new Scanner(new File(dataFile));) {
             String line;
             int lineNum = 1;
-            while ((line = input.readLine()) != null && line.length() != 0) {
-                String[] s = line.split(",");
-                for (int i = 0; i < s.length; i++) {
-                    if (s[i].equals("\"\"")) {
-                        s[i] = "";
-                    } else if (s[i].charAt(0) == '"') {
-                        if (s[i].split("\"").length > 1) {
-                            s[i] = s[i].split("\"")[1];
+            while (scanner.hasNextLine()) {
+                line = scanner.nextLine();
+                if(!line.isEmpty()) { // Пропускаем если строка пуста
+                    String[] s = line.split(","); // Делим столбцы, используя ',' как разделитель
+                    for (int i = 0; i < s.length; i++) {
+                        s[i] = s[i].strip(); // Убираем пробелы до кавычек
+                        if (s[i].equals("\"\"")) { // Если значение в столбце это две кавычки, то меняем на пустоту
+                            s[i] = "";
+                        } else if (s[i].charAt(0) == '"') {
+                            if (s[i].split("\"").length > 1) {
+                                s[i] = s[i].split("\"")[1]; // Убираем кавычки в конце и в начале
+                                s[i] = s[i].strip(); // Убираем пробелы после кавычек
+                            }
                         }
                     }
+                    columnMap.put(lineNum, s[column]);
                 }
-                columnMap.put(lineNum, s[column]);
                 lineNum++;
             }
         } catch (FileNotFoundException e) {
             System.out.println("Ошибка. Файл с данными об аэропортах не найден");
-            throw new RuntimeException(e);
-        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return columnMap;
