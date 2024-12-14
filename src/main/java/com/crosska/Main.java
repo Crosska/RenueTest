@@ -24,10 +24,10 @@ public class Main {
                 int columnId;
                 if (cmd.hasOption("indexed-column-id")) {
                     columnId = Integer.parseInt(cmd.getOptionValue("indexed-column-id"));
-                    if(columnId >= 0 && columnId <= 13) {
-                        proceedSearch(columnId, cmd.getOptionValue("input-file"), cmd.getOptionValue("data"), cmd.getOptionValue("output-file"), startTime);
+                    if (columnId >= 1 && columnId <= 13) {
+                        proceedSearch(columnId - 1, cmd.getOptionValue("input-file"), cmd.getOptionValue("data"), cmd.getOptionValue("output-file"), startTime);
                     } else {
-                        System.err.println("Ошибка. Параметр indexed-column-id (c) должен быть в пределах 0 <= c >= 13");
+                        System.err.println("Ошибка. Параметр indexed-column-id (c) должен быть в пределах от 1 до 13");
                     }
                 } else {
                     Parameters parameters = new Parameters();
@@ -49,21 +49,17 @@ public class Main {
 
     private static void proceedSearch(int columnId, String inputFile, String dataFile, String outputFile, long startTime) {
         List<String> list = FileWorker.readSearchQuery(inputFile);
-
         List<ResultElem> resArray = new ArrayList<>();
+        Map<Integer, String> mapColumn = FileWorker.readFile(columnId, dataFile);
         long initTime = System.currentTimeMillis() - startTime;
+        SearchWorker searchWorker = new SearchWorker(mapColumn);
         for (String search : list) {
-            System.out.println("\n -- Поиск по запросу \"" + search + "\"\n");
-            Map<Integer, String> sortedMap = FileWorker.readFile(columnId, dataFile, search);
-            for (Integer lineNum :sortedMap.keySet()) {
-                System.out.println(lineNum);
-            }
-            ResultElem result = new ResultElem(search, sortedMap.keySet().toArray(Integer[]::new), FileWorker.getSearchDuration());
+            ResultElem result = new ResultElem(search, searchWorker.doSearch(search).toArray(Integer[]::new), searchWorker.getSearchFileDuration());
             resArray.add(result);
         }
         JSONObject jsonObject = new JSONObject(initTime, outputFile);
 
-        for(ResultElem resultElem : resArray) {
+        for (ResultElem resultElem : resArray) {
             jsonObject.addNewResult(resultElem);
         }
 
