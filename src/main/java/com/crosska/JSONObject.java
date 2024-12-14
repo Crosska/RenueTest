@@ -10,6 +10,7 @@ public class JSONObject {
 
     private final long initTime;
 
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private final ArrayList<ResultElem> result;
 
     @JsonIgnore
