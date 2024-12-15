@@ -10,6 +10,10 @@ public class Main {
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
 
+        ArrayList<Integer> temp = new ArrayList<>();
+
+
+
         Options options = new Options();
         options.addOption("d", "data", true, "Path to the .csv text data file (including filename and extension)");
         options.addOption("c", "indexed-column-id", true, "Optional parameter which means search column number");
@@ -54,7 +58,7 @@ public class Main {
         long initTime = System.currentTimeMillis() - startTime;
         SearchWorker searchWorker = new SearchWorker(mapColumn);
         for (String search : list) {
-            ResultElem result = new ResultElem(search, searchWorker.doSearch(search).toArray(Integer[]::new), searchWorker.getSearchFileDuration());
+            ResultElem result = new ResultElem(search, searchWorker.doSearch(search), searchWorker.getSearchFileDuration());
             resArray.add(result);
         }
         JSONObject jsonObject = new JSONObject(initTime, outputFile);

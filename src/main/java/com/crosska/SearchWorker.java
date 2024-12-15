@@ -1,13 +1,10 @@
 package com.crosska;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SearchWorker {
 
-    private Map<Integer, String> columnMap;
+    private final Map<Integer, String> columnMap;
 
     private long duration;
 
@@ -15,15 +12,20 @@ public class SearchWorker {
         this.columnMap = columnMap;
     }
 
-    public ArrayList<Integer> doSearch(String search) {
+    public Integer[] doSearch(String search) {
         long startTime = System.currentTimeMillis();
-        ArrayList<Integer> lines = new ArrayList<>();
-        columnMap = sortByValues(columnMap);
+        Map<Integer, String> answerMap = new HashMap<>();
+
         for (Map.Entry<Integer, String> entry : columnMap.entrySet()) {
             if (entry.getValue().startsWith(search)) {
-                lines.add(entry.getKey());
+                answerMap.put(entry.getKey(), entry.getValue());
+                //System.out.println("RAW: " + entry.getKey() + " : " + entry.getValue());
             }
         }
+
+        answerMap = sortByValues(answerMap);
+        Integer[] lines = answerMap.keySet().toArray(Integer[]::new);
+
         duration = System.currentTimeMillis() - startTime;
         return lines;
     }

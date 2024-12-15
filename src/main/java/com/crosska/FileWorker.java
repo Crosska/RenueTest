@@ -30,7 +30,6 @@ public class FileWorker {
         // Map хранит в себе номер строки в файле как ключ и значение столбца по которому будет делаться сортировка
         try (Scanner scanner = new Scanner(new File(dataFile));) {
             String line;
-            int lineNum = 1;
             while (scanner.hasNextLine()) {
                 line = scanner.nextLine();
                 if(!line.isEmpty()) { // Пропускаем если строка пуста
@@ -46,9 +45,8 @@ public class FileWorker {
                             }
                         }
                     }
-                    columnMap.put(lineNum, s[column]);
+                    columnMap.put(Integer.parseInt(s[0]), s[column]);
                 }
-                lineNum++;
             }
         } catch (FileNotFoundException e) {
             System.out.println("Ошибка. Файл с данными об аэропортах не найден");
